@@ -17,7 +17,7 @@ model User {
   searches  Search[]
   articles  Article[]
   createdAt DateTime @default(now())
-}
+} 
 
 model Search {
   id                 String    @id @map("_id") @default(auto()) @db.ObjectId
@@ -25,17 +25,8 @@ model Search {
   user               User?     @relation(fields: [userId], references: [id])
   userId             String?   @db.ObjectId
   
-  // n8n workflow tracking
-  workflowStatus     String?   @default("pending") // pending, feasibility_check, fetching_articles, embedding, completed, failed
-  isFeasible         Boolean?  // Result of feasibility check
-  feasibilityReason  String?   // Why the search is feasible/not feasible
-  articlesFound      Int?      @default(0)
-  
   // Timestamps
   createdAt          DateTime  @default(now())
-  feasibilityCheckedAt DateTime?
-  articlesProcessedAt  DateTime?
-  completedAt        DateTime?
 }
 
 model Article {
@@ -49,7 +40,7 @@ model Article {
   createdBy   User?    @relation(fields: [createdById], references: [id])
   createdById String?  @db.ObjectId
   
-  // Workflow status
+  // Processing status
   isEmbedded      Boolean?  @default(false)
   embeddedAt      DateTime?
   processingStatus String?  @default("pending") // pending, embedding, completed, failed

@@ -13,7 +13,7 @@
 │                      MONGODB (Prisma)                                │
 │  ┌───────────────────────────────────────────────────────────────┐  │
 │  │ User { id, name, createdAt }                                   │  │
-│  │ Search { id, query, workflowStatus, userId, timestamps, ... } │  │
+│  │ Search { id, query, userId, timestamps }                       │  │
 │  │ Article { id, url, WeaviateId*, processingStatus, ... }       │  │
 │  │                                     ↑ Reference to Weaviate!   │  │
 │  └───────────────────────────────────────────────────────────────┘  │
@@ -101,7 +101,6 @@ const searchRecord = await logUserSearch(user.id, "latest AI breakthroughs");
       id: "search-456",
       query: "latest AI breakthroughs",
       userId: "user-123",
-      workflowStatus: "pending",
       createdAt: "2025-11-10T10:00:00Z"
     }
 
@@ -338,9 +337,6 @@ Search: {
   "_id": "search-456",
   "userId": "user-123",
   "query": "latest AI breakthroughs",
-  "workflowStatus": "completed",
-  "isFeasible": true,
-  "articlesFound": 5,
   "createdAt": "2025-11-10T10:00:00Z"
 }
 

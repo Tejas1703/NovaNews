@@ -48,7 +48,7 @@ export default function UserNameModal({ isOpen, onSubmit }: UserNameModalProps) 
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-md font-medium text-black mb-2">
               Your Name
             </label>
             <input
@@ -61,7 +61,7 @@ export default function UserNameModal({ isOpen, onSubmit }: UserNameModalProps) 
               }}
               className={`w-full px-4 py-3 border ${
                 error ? 'border-red-500' : 'border-gray-300'
-              } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black`}
               placeholder="Enter your name"
               autoFocus
             />
@@ -76,7 +76,7 @@ export default function UserNameModal({ isOpen, onSubmit }: UserNameModalProps) 
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-black-500">
           <p>Your name will be saved for personalized search results</p>
         </div>
       </div>

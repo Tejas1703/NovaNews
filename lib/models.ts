@@ -32,63 +32,10 @@ export async function logUserSearch(userId: string, query: string) {
   return prisma.search.create({
     data: {
       query: query.trim(),
-      workflowStatus: 'pending',
       user: {
         connect: { id: userId },
       },
     },
-  });
-}
-
-// Update search with feasibility check results
-export async function updateSearchFeasibility(
-  searchId: string,
-  isFeasible: boolean,
-  reason?: string
-) {
-  return prisma.search.update({
-    where: { id: searchId },
-    data: {
-      isFeasible,
-      feasibilityReason: reason,
-      feasibilityCheckedAt: new Date(),
-      workflowStatus: isFeasible ? 'fetching_articles' : 'failed',
-    },
-  });
-}
-
-// Update search workflow status
-export async function updateSearchStatus(
-  searchId: string,
-  status: string,
-  articlesFound?: number
-) {
-  const updateData: Prisma.SearchUpdateInput = {
-    workflowStatus: status,
-  };
-
-  if (articlesFound !== undefined) {
-    updateData.articlesFound = articlesFound;
-    updateData.articlesProcessedAt = new Date();
-  }
-
-  if (status === 'completed') {
-    updateData.completedAt = new Date();
-  }
-
-  return prisma.search.update({
-    where: { id: searchId },
-    data: updateData,
-  });
-}
-
-// Get pending searches (for feasibility check)
-export async function getPendingSearches(limit: number = 10) {
-  return prisma.search.findMany({
-    where: { workflowStatus: 'pending' },
-    take: limit,
-    orderBy: { createdAt: 'asc' },
-    include: { user: true },
   });
 }
 

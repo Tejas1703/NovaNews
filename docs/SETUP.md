@@ -11,7 +11,7 @@ This project uses a 2-tier architecture optimized for semantic news search:
 
 **MongoDB stores ONLY**:
 - User records (name, createdAt)
-- Search queries & workflow status
+- Search queries
 - Article references (id, url, WeaviateId, processingStatus)
 
 **Weaviate stores**:
@@ -225,12 +225,7 @@ model Search {
   id                   String    @id @default(auto()) @db.ObjectId
   query                String
   userId               String?   @db.ObjectId
-  workflowStatus       String?   @default("pending")
-  isFeasible           Boolean?
-  feasibilityReason    String?
-  articlesFound        Int?      @default(0)
   createdAt            DateTime  @default(now())
-  // ... timestamps
 }
 
 model Article {
@@ -285,7 +280,6 @@ See `lib/workflow.ts` for integrated functions that handle multiple databases:
 ### Direct MongoDB Operations (lib/models.ts)
 - `findOrCreateUserByName()` - User management
 - `logUserSearch()` - Log search queries
-- `updateSearchFeasibility()` - Update search status
 - `createArticleReference()` - Create article reference
 
 ### Direct Weaviate Operations (lib/Weaviate.ts)

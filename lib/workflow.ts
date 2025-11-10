@@ -1,16 +1,15 @@
 /**
- * Integrated workflow helpers for the 2-tier architecture:
+ * Integrated helpers for the 2-tier architecture:
  * - MongoDB (Prisma): User data, search tracking, article references
  * - Weaviate: Article metadata and embeddings
  * 
- * Use these functions in your n8n workflow or API routes
+ * Use these functions in your API routes
  */
 
 import {
   createArticleReference,
   updateArticleWeaviateId,
   updateArticleStatus,
-  updateSearchStatus,
   prisma,
 } from './models';
 import {
@@ -97,11 +96,10 @@ export async function storeArticleWithEmbedding(articleData: ArticleInput) {
 }
 
 /**
- * Batch process multiple articles (for n8n loop)
+ * Batch process multiple articles
  */
 export async function batchStoreArticlesWithEmbeddings(
-  articles: ArticleInput[],
-  searchId?: string
+  articles: ArticleInput[]
 ) {
   const results = {
     success: [] as string[],
@@ -118,11 +116,6 @@ export async function batchStoreArticlesWithEmbeddings(
         error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
-  }
-
-  // Update search status
-  if (searchId) {
-    await updateSearchStatus(searchId, 'completed', results.success.length);
   }
 
   return {
@@ -235,18 +228,16 @@ export async function deleteArticleCompletely(articleId: string) {
 }
 
 // ============================================================================
-// USER WORKFLOWS
+// USER OPERATIONS
 // ============================================================================
 
 /**
- * Get user's search history with article counts
+ * Get user's search history
  */
 export async function getUserSearchHistory(userId: string, limit: number = 10) {
   const searches = await prisma.search.findMany({
     where: {
       userId,
-      workflowStatus: 'completed',
-      isFeasible: true,
     },
     take: limit,
     orderBy: { createdAt: 'desc' },

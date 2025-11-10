@@ -21,7 +21,7 @@ This project implements a **2-tier specialized database architecture** optimized
 
 **MongoDB** (lightweight, fast queries, reference tracking)
 - User: `{ id, name, createdAt }`
-- Search: `{ query, workflowStatus, isFeasible, articlesFound, timestamps }`
+- Search: `{ query, userId, timestamps }`
 - Article: `{ id, url, WeaviateId, isEmbedded, processingStatus }`  ← Reference only!
 
 **Weaviate** (semantic search, full content storage)
@@ -215,7 +215,6 @@ All in `lib/workflow.ts`:
 See `lib/models.ts` for direct MongoDB operations:
 - `findOrCreateUserByName()` - User management
 - `logUserSearch()` - Log search queries
-- `updateSearchFeasibility()` - Update search status
 - `createArticleReference()` - Create article reference in MongoDB
 
 See `lib/Weaviate.ts` for direct Weaviate operations:
