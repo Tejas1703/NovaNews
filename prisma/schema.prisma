@@ -1,0 +1,60 @@
+// Prisma schema for MongoDB
+// MongoDB stores ONLY user data and references (IDs, URLs, timestamps)
+// Article metadata (title, content, description) stored in Weaviate
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @map("_id") @default(auto()) @db.ObjectId
+  name      String
+  searches  Search[]
+  articles  Article[]
+  createdAt DateTime @default(now())
+}
+
+model Search {
+  id                 String    @id @map("_id") @default(auto()) @db.ObjectId
+  query              String    // User's search query
+  user               User?     @relation(fields: [userId], references: [id])
+  userId             String?   @db.ObjectId
+  
+  // n8n workflow tracking
+  workflowStatus     String?   @default("pending") // pending, feasibility_check, fetching_articles, embedding, completed, failed
+  isFeasible         Boolean?  // Result of feasibility check
+  feasibilityReason  String?   // Why the search is feasible/not feasible
+  articlesFound      Int?      @default(0)
+  
+  // Timestamps
+  createdAt          DateTime  @default(now())
+  feasibilityCheckedAt DateTime?
+  articlesProcessedAt  DateTime?
+  completedAt        DateTime?
+}
+
+model Article {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  
+  // Reference data only (actual metadata in Weaviate)
+  url         String?  @unique  // Article source URL
+  weaviateId  String?  @unique  // Vector ID in Weaviate (where metadata lives)
+  
+  // User who created/requested this article
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdById String?  @db.ObjectId
+  
+  // Workflow status
+  isEmbedded      Boolean?  @default(false)
+  embeddedAt      DateTime?
+  processingStatus String?  @default("pending") // pending, embedding, completed, failed
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
